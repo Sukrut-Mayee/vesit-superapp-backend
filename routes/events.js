@@ -7,10 +7,12 @@ const router = express.Router();
 // GET /events
 router.get('/', requireAuth, async (req, res) => {
   try {
+    const today = new Date().toISOString().split('T')[0];
     const { data, error } = await supabase
       .from('events')
       .select('*')
       .eq('college_id', req.user.collegeId)
+      .gte('date', today)
       .order('date', { ascending: true })
       .order('time', { ascending: true }); // Secondary order by time if available
 

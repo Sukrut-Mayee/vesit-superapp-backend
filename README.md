@@ -21,6 +21,7 @@ Multi-tenant college superapp backend service built with **Node.js**, **Express*
   - [Notes Repository](#notes-repository)
   - [Events & RSVPs](#events--rsvps)
   - [Clubs & Announcements](#clubs--announcements)
+  - [Global Announcements](#global-announcements)
   - [Lost & Found](#lost--found)
   - [Internships](#internships)
   - [Placements](#placements)
@@ -470,6 +471,84 @@ Lists all posts/updates for a specific club.
 ```json
 {
   "posts": [ ... ]
+}
+```
+
+---
+
+### Global Announcements
+
+#### `GET /announcements`
+Fetches global announcements for the college, ordered by newest first.
+- **Auth**: `Bearer <token>`
+- **Response `200 OK`**:
+```json
+{
+  "announcements": [
+    {
+      "id": "uuid",
+      "college_id": "uuid",
+      "title": "Semester Exams Updated",
+      "body": "Please check the updated timetable on the portal.",
+      "created_at": "2026-09-12T12:00:00Z"
+    }
+  ]
+}
+```
+
+#### `POST /announcements`
+Creates a global announcement.
+- **Auth**: `Bearer <token>` (`admin` only)
+- **Body (`application/json`)**:
+```json
+{
+  "title": "Campus Maintenance",
+  "body": "Main gate will be closed this weekend."
+}
+```
+- **Response `201 Created`**:
+```json
+{
+  "announcement": {
+    "id": "uuid",
+    "college_id": "uuid",
+    "title": "Campus Maintenance",
+    "body": "Main gate will be closed this weekend.",
+    "created_at": "2026-09-12T12:00:00Z"
+  }
+}
+```
+
+#### `PATCH /announcements/:id`
+Updates an existing global announcement.
+- **Auth**: `Bearer <token>` (`admin` only)
+- **Body (`application/json`)**:
+```json
+{
+  "title": "Campus Maintenance - Rescheduled"
+}
+```
+- **Response `200 OK`**:
+```json
+{
+  "announcement": {
+    "id": "uuid",
+    "college_id": "uuid",
+    "title": "Campus Maintenance - Rescheduled",
+    "body": "Main gate will be closed this weekend.",
+    "created_at": "2026-09-12T12:00:00Z"
+  }
+}
+```
+
+#### `DELETE /announcements/:id`
+Deletes a global announcement.
+- **Auth**: `Bearer <token>` (`admin` only)
+- **Response `200 OK`**:
+```json
+{
+  "success": true,
+  "message": "Announcement deleted successfully"
 }
 ```
 

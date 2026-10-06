@@ -35,6 +35,11 @@
       "key": "donation_id",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "announcement_id",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -48,8 +53,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/health",
-              "host": ["{{base_url}}"],
-              "path": ["health"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
             }
           }
         }
@@ -74,8 +83,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/signup",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "signup"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "signup"
+              ]
             }
           }
         },
@@ -109,8 +123,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -144,8 +163,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           }
         },
@@ -161,8 +185,13 @@
             ],
             "url": {
               "raw": "{{base_url}}/auth/me",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "me"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
             }
           }
         }
@@ -183,8 +212,12 @@
             ],
             "url": {
               "raw": "{{base_url}}/resources?status=AVAILABLE&category=&listing_type=&search=",
-              "host": ["{{base_url}}"],
-              "path": ["resources"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "resources"
+              ],
               "query": [
                 {
                   "key": "status",
@@ -218,8 +251,13 @@
             ],
             "url": {
               "raw": "{{base_url}}/resources/{{resource_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["resources", "{{resource_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "resources",
+                "{{resource_id}}"
+              ]
             }
           }
         },
@@ -257,8 +295,12 @@
             },
             "url": {
               "raw": "{{base_url}}/resources",
-              "host": ["{{base_url}}"],
-              "path": ["resources"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "resources"
+              ]
             }
           }
         },
@@ -304,8 +346,12 @@
             },
             "url": {
               "raw": "{{base_url}}/resources",
-              "host": ["{{base_url}}"],
-              "path": ["resources"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "resources"
+              ]
             }
           }
         },
@@ -329,8 +375,13 @@
             },
             "url": {
               "raw": "{{base_url}}/resources/{{resource_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["resources", "{{resource_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "resources",
+                "{{resource_id}}"
+              ]
             }
           }
         },
@@ -346,8 +397,13 @@
             ],
             "url": {
               "raw": "{{base_url}}/resources/{{resource_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["resources", "{{resource_id}}"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "resources",
+                "{{resource_id}}"
+              ]
             }
           }
         }
@@ -390,8 +446,12 @@
             },
             "url": {
               "raw": "{{base_url}}/borrow-requests",
-              "host": ["{{base_url}}"],
-              "path": ["borrow-requests"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow-requests"
+              ]
             }
           }
         },
@@ -407,8 +467,13 @@
             ],
             "url": {
               "raw": "{{base_url}}/borrow-requests/my-requests",
-              "host": ["{{base_url}}"],
-              "path": ["borrow-requests", "my-requests"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow-requests",
+                "my-requests"
+              ]
             }
           }
         },
@@ -424,8 +489,13 @@
             ],
             "url": {
               "raw": "{{base_url}}/borrow-requests/received",
-              "host": ["{{base_url}}"],
-              "path": ["borrow-requests", "received"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow-requests",
+                "received"
+              ]
             }
           }
         },
@@ -441,8 +511,12 @@
             ],
             "url": {
               "raw": "{{base_url}}/borrow-requests?status=",
-              "host": ["{{base_url}}"],
-              "path": ["borrow-requests"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow-requests"
+              ],
               "query": [
                 {
                   "key": "status",
@@ -472,8 +546,14 @@
             },
             "url": {
               "raw": "{{base_url}}/borrow-requests/{{borrow_request_id}}/approve",
-              "host": ["{{base_url}}"],
-              "path": ["borrow-requests", "{{borrow_request_id}}", "approve"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow-requests",
+                "{{borrow_request_id}}",
+                "approve"
+              ]
             }
           }
         },
@@ -497,8 +577,14 @@
             },
             "url": {
               "raw": "{{base_url}}/borrow-requests/{{borrow_request_id}}/reject",
-              "host": ["{{base_url}}"],
-              "path": ["borrow-requests", "{{borrow_request_id}}", "reject"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow-requests",
+                "{{borrow_request_id}}",
+                "reject"
+              ]
             }
           }
         },
@@ -514,8 +600,14 @@
             ],
             "url": {
               "raw": "{{base_url}}/borrow-requests/{{borrow_request_id}}/return",
-              "host": ["{{base_url}}"],
-              "path": ["borrow-requests", "{{borrow_request_id}}", "return"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "borrow-requests",
+                "{{borrow_request_id}}",
+                "return"
+              ]
             }
           }
         }
@@ -558,8 +650,12 @@
             },
             "url": {
               "raw": "{{base_url}}/donations",
-              "host": ["{{base_url}}"],
-              "path": ["donations"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donations"
+              ]
             }
           }
         },
@@ -575,8 +671,12 @@
             ],
             "url": {
               "raw": "{{base_url}}/donations?verified=",
-              "host": ["{{base_url}}"],
-              "path": ["donations"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donations"
+              ],
               "query": [
                 {
                   "key": "verified",
@@ -598,8 +698,13 @@
             ],
             "url": {
               "raw": "{{base_url}}/donations/my-donations",
-              "host": ["{{base_url}}"],
-              "path": ["donations", "my-donations"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donations",
+                "my-donations"
+              ]
             }
           }
         },
@@ -615,8 +720,14 @@
             ],
             "url": {
               "raw": "{{base_url}}/donations/{{donation_id}}/verify",
-              "host": ["{{base_url}}"],
-              "path": ["donations", "{{donation_id}}", "verify"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "donations",
+                "{{donation_id}}",
+                "verify"
+              ]
             }
           }
         }
@@ -662,8 +773,12 @@
             },
             "url": {
               "raw": "{{base_url}}/notes",
-              "host": ["{{base_url}}"],
-              "path": ["notes"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notes"
+              ]
             }
           }
         },
@@ -679,8 +794,12 @@
             ],
             "url": {
               "raw": "{{base_url}}/notes?subject=&year=&topic=",
-              "host": ["{{base_url}}"],
-              "path": ["notes"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notes"
+              ],
               "query": [
                 {
                   "key": "subject",
@@ -715,8 +834,12 @@
             ],
             "url": {
               "raw": "{{base_url}}/lost-found?type=",
-              "host": ["{{base_url}}"],
-              "path": ["lost-found"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lost-found"
+              ],
               "query": [
                 {
                   "key": "type",
@@ -758,8 +881,133 @@
             },
             "url": {
               "raw": "{{base_url}}/lost-found",
-              "host": ["{{base_url}}"],
-              "path": ["lost-found"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "lost-found"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 - Global Announcements",
+      "item": [
+        {
+          "name": "List Announcements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/announcements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "announcements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Announcement (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.announcement && jsonData.announcement.id) {",
+                  "    pm.collectionVariables.set('announcement_id', jsonData.announcement.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Campus Maintenance\",\n  \"body\": \"Main gate will be closed this weekend.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/announcements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "announcements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Announcement (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Campus Maintenance - Rescheduled\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/announcements/{{announcement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "announcements",
+                "{{announcement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Announcement (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/announcements/{{announcement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "announcements",
+                "{{announcement_id}}"
+              ]
             }
           }
         }
