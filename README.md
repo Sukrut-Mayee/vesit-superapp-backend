@@ -27,6 +27,10 @@ Multi-tenant college superapp backend service built with **Node.js**, **Express*
   - [Placements](#placements)
   - [Resources (Peer-to-Peer Sharing)](#resources-peer-to-peer-sharing)
   - [Borrow Requests](#borrow-requests)
+  - [Donations](#donations)
+  - [Attendance Module](#attendance-module)
+- [Test Accounts & Credentials](#test-accounts--credentials)
+- [Postman Collection](#postman-collection)
 
 ---
 
@@ -1072,8 +1076,181 @@ Verifies a donation (Admin only). Sets `verified = true`, assigns `verified_by =
 
 ---
 
+### Attendance Module
+
+#### `GET /attendance/me`
+Retrieves the logged-in student's attendance records across all subjects with computed metrics.
+- **Auth**: `Bearer <token>` (`student` or authenticated user)
+- **Query Params**: `semester` (e.g. `?semester=SEM 5`), `academic_year`
+- **Response `200 OK`**:
+```json
+{
+  "attendance": [
+    {
+      "id": "uuid",
+      "college_id": "uuid",
+      "student_id": "uuid",
+      "subject": "Operating Systems",
+      "attended_classes": 27,
+      "total_classes": 30,
+      "percentage": 90.00,
+      "semester": "SEM 5",
+      "division": "D7A",
+      "academic_year": "2026-2027",
+      "updated_at": "2026-10-06T12:00:00Z"
+    }
+  ],
+  "summary": {
+    "total_subjects": 1,
+    "total_attended_classes": 27,
+    "total_conducted_classes": 30,
+    "overall_percentage": 90.00,
+    "low_attendance_subjects_count": 0,
+    "is_defaulter": false
+  }
+}
+```
+
+#### `GET /attendance/me/:subject`
+Retrieves attendance for a specific subject for the logged-in student.
+- **Auth**: `Bearer <token>`
+- **Response `200 OK`**:
+```json
+{
+  "attendance": {
+    "id": "uuid",
+    "subject": "Operating Systems",
+    "attended_classes": 27,
+    "total_classes": 30,
+    "percentage": 90.00,
+    "semester": "SEM 5"
+  }
+}
+```
+
+#### `GET /attendance`
+Admin endpoint: Lists attendance records for the college with optional filters.
+- **Auth**: `Bearer <token>` (`admin` only)
+- **Query Params**: `division`, `semester`, `subject`, `student_id`, `academic_year`
+- **Response `200 OK`**:
+```json
+{
+  "attendance": [
+    {
+      "id": "uuid",
+      "student_id": "uuid",
+      "subject": "Operating Systems",
+      "attended_classes": 27,
+      "total_classes": 30,
+      "percentage": 90.00,
+      "student": {
+        "id": "uuid",
+        "name": "Aditya Menon",
+        "email": "aditya.menon@vesit.ves.ac.in"
+      }
+    }
+  ]
+}
+```
+
+#### `POST /attendance`
+Admin endpoint: Creates an attendance entry for a student. Automatically validates that `attended_classes <= total_classes` and calculates `percentage` on backend.
+- **Auth**: `Bearer <token>` (`admin` only)
+- **Body (`application/json`)**:
+```json
+{
+  "student_id": "uuid",
+  "subject": "Operating Systems",
+  "attended_classes": 27,
+  "total_classes": 30,
+  "semester": "SEM 5",
+  "division": "D7A",
+  "academic_year": "2026-2027"
+}
+```
+- **Response `201 Created`**:
+```json
+{
+  "attendance": {
+    "id": "uuid",
+    "student_id": "uuid",
+    "subject": "Operating Systems",
+    "attended_classes": 27,
+    "total_classes": 30,
+    "percentage": 90.00
+  }
+}
+```
+*(Returns `400 Bad Request` if `attended_classes > total_classes`)*.
+
+#### `PATCH /attendance/:id`
+Admin endpoint: Updates attendance figures or metadata. Recalculates `percentage` on the backend.
+- **Auth**: `Bearer <token>` (`admin` only)
+- **Body (`application/json`)**:
+```json
+{
+  "attended_classes": 28,
+  "total_classes": 30
+}
+```
+- **Response `200 OK`**:
+```json
+{
+  "attendance": {
+    "id": "uuid",
+    "attended_classes": 28,
+    "total_classes": 30,
+    "percentage": 93.33
+  }
+}
+```
+
+#### `POST /attendance/bulk`
+Admin endpoint: Bulk import attendance records for a division or subject batch.
+- **Auth**: `Bearer <token>` (`admin` only)
+- **Body (`application/json`)**:
+```json
+{
+  "records": [
+    {
+      "student_id": "uuid",
+      "subject": "Operating Systems",
+      "attended_classes": 25,
+      "total_classes": 30,
+      "semester": "SEM 5",
+      "division": "D7A"
+    }
+  ]
+}
+```
+- **Response `201 Created`**:
+```json
+{
+  "success": true,
+  "count": 1,
+  "records": [ ... ]
+}
+```
+
+---
+
+## Test Accounts & Credentials
+
+The following pre-configured test accounts are ready for testing on the live/local database:
+
+| Role | Email | Password | College Domain |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@vesit.ves.ac.in` | `AdminPassword123!` | `vesit.ves.ac.in` / `ves.ac.in` |
+| **Student 1** | `student@vesit.ves.ac.in` | `Password123!` | `vesit.ves.ac.in` |
+| **Student 2** | `aditya.menon@vesit.ves.ac.in` | `Password123!` | `vesit.ves.ac.in` |
+| **Club Head** | `riya.shah@vesit.ves.ac.in` | `Password123!` | `vesit.ves.ac.in` |
+| **Other College Student** | `student@testb.edu` | `Password123!` | `testb.edu` *(Tenant isolation)* |
+
+---
+
 ## Postman Collection
 
 A complete Postman Collection is included at [`postman_collection.json`](./postman_collection.json).
 Import it into Postman to test all endpoints with pre-configured requests, environment variables, and authentication flows.
+
 

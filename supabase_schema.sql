@@ -317,6 +317,43 @@ create policy "announcements_isolation" on announcements for all
   with check (college_id = current_college_id());
 
 -- ------------------------------------------------------------
+-- 11. ATTENDANCE
+-- ------------------------------------------------------------
+create table if not exists attendance (
+  id uuid primary key default gen_random_uuid(),
+  college_id uuid not null references colleges(id) on delete cascade,
+  student_id uuid not null references users(id) on delete cascade,
+  subject text not null,
+  attended_classes integer not null default 0 check (attended_classes >= 0),
+  total_classes integer not null default 0 check (total_classes >= 0),
+  percentage numeric(5,2) not null default 0.00 check (percentage >= 0.00 and percentage <= 100.00),
+  semester text,
+  division text,
+  academic_year text,
+  updated_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  constraint check_attended_le_total check (attended_classes <= total_classes),
+  constraint unique_student_subject_sem unique (college_id, student_id, subject, semester)
+);
+
+create index if not exists idx_attendance_college on attendance(college_id);
+create index if not exists idx_attendance_student on attendance(student_id);
+create index if not exists idx_attendance_division on attendance(college_id, division);
+alter table attendance enable row level security;
+
+-- Students can read their own attendance
+drop policy if exists "attendance_student_isolation" on attendance;
+create policy "attendance_student_isolation" on attendance for select
+  using (college_id = current_college_id() and (student_id = auth.uid() or current_setting('request.jwt.claims', true)::json->>'app_role' = 'admin'));
+
+-- Admins can insert/update/delete attendance for their college
+drop policy if exists "attendance_admin_modify" on attendance;
+create policy "attendance_admin_modify" on attendance for all
+  using (college_id = current_college_id())
+  with check (college_id = current_college_id());
+
+-- ------------------------------------------------------------
 insert into colleges (name, email_domain)
 values ('VESIT', 'vesit.ves.ac.in')
 on conflict (email_domain) do nothing;
+

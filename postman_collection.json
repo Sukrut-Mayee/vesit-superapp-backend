@@ -40,6 +40,11 @@
       "key": "announcement_id",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "attendance_id",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -1007,6 +1012,212 @@
               "path": [
                 "announcements",
                 "{{announcement_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 - Attendance",
+      "item": [
+        {
+          "name": "Get My Attendance (Student)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attendance/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Subject Attendance (Student)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attendance/me/Distributed Systems",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "me",
+                "Distributed Systems"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List All Attendance Records (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attendance?division=D7A&semester=SEM 5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance"
+              ],
+              "query": [
+                {
+                  "key": "division",
+                  "value": "D7A"
+                },
+                {
+                  "key": "semester",
+                  "value": "SEM 5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Attendance Record (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.attendance && jsonData.attendance.id) {",
+                  "    pm.collectionVariables.set('attendance_id', jsonData.attendance.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": \"56616ecc-5b17-4dd5-9a47-febe5b30f85f\",\n  \"subject\": \"Operating Systems\",\n  \"attended_classes\": 26,\n  \"total_classes\": 30,\n  \"semester\": \"SEM 5\",\n  \"division\": \"D7A\",\n  \"academic_year\": \"2026-2027\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/attendance",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Attendance Record (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"attended_classes\": 28,\n  \"total_classes\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/attendance/{{attendance_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendance_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Bulk Import Attendance (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"records\": [\n    {\n      \"student_id\": \"56616ecc-5b17-4dd5-9a47-febe5b30f85f\",\n      \"subject\": \"Database Management Systems\",\n      \"attended_classes\": 24,\n      \"total_classes\": 28,\n      \"semester\": \"SEM 5\",\n      \"division\": \"D7A\",\n      \"academic_year\": \"2026-2027\"\n    },\n    {\n      \"student_id\": \"56616ecc-5b17-4dd5-9a47-febe5b30f85f\",\n      \"subject\": \"Computer Networks\",\n      \"attended_classes\": 22,\n      \"total_classes\": 25,\n      \"semester\": \"SEM 5\",\n      \"division\": \"D7A\",\n      \"academic_year\": \"2026-2027\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/attendance/bulk",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "bulk"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Attendance Record (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attendance/{{attendance_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "{{attendance_id}}"
               ]
             }
           }
