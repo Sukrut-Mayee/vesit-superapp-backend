@@ -355,6 +355,8 @@ Redirects (302) to the Cloudinary asset download URL.
 
 #### `GET /events`
 Lists upcoming college events ordered by date and time.
+- Each event includes `rsvp_count` and `has_rsvpd` for the caller. RSVP user identities are not returned. These fields persist across refreshes.
+- RSVP cancellation is not supported; clients should show an already-registered state after success or HTTP 409.
 - **Auth**: `Bearer <token>`
 - **Response `200 OK`**:
 ```json
@@ -561,9 +563,9 @@ Deletes a global announcement.
 ### Lost & Found
 
 #### `GET /lost-found`
-Lists active (open) lost and found listings.
+Lists college-scoped lost and found listings (open by default).
 - **Auth**: `Bearer <token>`
-- **Query Params**: `type` (`"lost"` or `"found"`)
+- **Query Params**: `type` (`"lost"` or `"found"`), `status` (`"open"`, `"resolved"`, or `"all"`; default `"open"`). Use `status=all` for client-side status/history filters.
 - **Response `200 OK`**:
 ```json
 {
@@ -599,7 +601,8 @@ Creates a lost or found report.
 
 #### `PATCH /lost-found/:id/resolve`
 Marks a lost/found listing as resolved.
-- **Auth**: `Bearer <token>` (Owner of the listing or `admin`)
+- **Auth**: `Bearer <token>` (poster only, including for admin accounts)
+- For a lost post, the poster confirms recovery. For a found post, the poster confirms handover to its owner. A different student or unrelated admin receives 403; cross-college/missing listings receive 404. Repeating resolution as the poster returns 200 without another update.
 - **Response `200 OK`**:
 ```json
 {
