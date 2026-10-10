@@ -10,14 +10,20 @@ router.get('/', requireAuth, async (req, res) => {
     const today = new Date().toISOString().split('T')[0];
     const { data, error } = await supabase
       .from('events')
-      .select('*')
+      .select('*, event_rsvps(user_id)')
       .eq('college_id', req.user.collegeId)
       .gte('date', today)
       .order('date', { ascending: true })
       .order('time', { ascending: true }); // Secondary order by time if available
 
     if (error) throw error;
-    res.json({ events: data });
+    const events = (data || []).map(({ event_rsvps: rsvps = [], ...event }) => ({
+      ...event,
+      rsvp_count: rsvps.length,
+      has_rsvpd: rsvps.some(rsvp => rsvp.user_id === req.user.id)
+    }));
+    // Do not expose other students' RSVP identities to the client.
+    res.json({ events });
   } catch (err) {
     console.error('list events error', err);
     res.status(500).json({ error: 'Could not fetch events' });
