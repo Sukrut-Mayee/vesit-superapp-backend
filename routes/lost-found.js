@@ -19,8 +19,13 @@ router.get('/', requireAuth, async (req, res) => {
       .from('lost_found')
       .select('*')
       .eq('college_id', req.user.collegeId)
-      .eq('status', 'open') // Default return only active/open listings
       .order('created_at', { ascending: false });
+
+    const status = req.query.status || 'open';
+    if (!['open', 'resolved', 'all'].includes(status)) {
+      return res.status(400).json({ error: 'status must be open, resolved or all' });
+    }
+    if (status !== 'all') query = query.eq('status', status);
 
     const { type } = req.query;
     if (type) {
@@ -88,7 +93,7 @@ router.patch('/:id/resolve', requireAuth, async (req, res) => {
     // Fetch the listing and ensure it belongs to the user's college
     const { data: listing, error: listingError } = await supabase
       .from('lost_found')
-      .select('id, college_id, poster_id')
+      .select('id, college_id, poster_id, status')
       .eq('id', listingId)
       .eq('college_id', req.user.collegeId)
       .single();
@@ -97,10 +102,11 @@ router.patch('/:id/resolve', requireAuth, async (req, res) => {
       return res.status(404).json({ error: 'Listing not found' });
     }
 
-    // Check authorization: must be the poster OR an admin
-    if (listing.poster_id !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Forbidden — you are not the owner or admin' });
+    // Only the reporter can confirm recovery or handover. Moderation is separate.
+    if (listing.poster_id !== req.user.id) {
+      return res.status(403).json({ error: 'Only the person who posted this listing can resolve it' });
     }
+    if (listing.status === 'resolved') return res.json({ listing });
 
     // Mark as resolved
     const { data, error } = await supabase
@@ -108,6 +114,7 @@ router.patch('/:id/resolve', requireAuth, async (req, res) => {
       .update({ status: 'resolved' })
       .eq('id', listingId)
       .eq('college_id', req.user.collegeId) // Extra safety check
+      .eq('poster_id', req.user.id)
       .select()
       .single();
 
