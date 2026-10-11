@@ -45,6 +45,26 @@
       "key": "attendance_id",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "event_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "lost_found_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "internship_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "placement_id",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -856,6 +876,7 @@
         },
         {
           "name": "Create Lost/Found Item",
+          "event": [{ "listen": "test", "script": { "exec": ["var data = pm.response.json(); if (data.listing) pm.collectionVariables.set('lost_found_id', data.listing.id);"], "type": "text/javascript" } }],
           "request": {
             "method": "POST",
             "header": [
@@ -1014,6 +1035,174 @@
                 "{{announcement_id}}"
               ]
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 - Events and RSVPs",
+      "item": [
+        {
+          "name": "List Upcoming Events",
+          "description": "Each event includes rsvp_count and caller-specific has_rsvpd; RSVP identities are omitted.",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }],
+            "url": "{{base_url}}/events"
+          }
+        },
+        {
+          "name": "Create Event (Admin)",
+          "event": [{ "listen": "test", "script": { "exec": ["var data = pm.response.json(); if (data.event) pm.collectionVariables.set('event_id', data.event.id);"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Week 6 QA Event\",\n  \"date\": \"2026-11-20\",\n  \"time\": \"10:00:00\",\n  \"venue\": \"Auditorium\"\n}" },
+            "url": "{{base_url}}/events"
+          }
+        },
+        {
+          "name": "RSVP (Student)",
+          "description": "A repeated RSVP returns HTTP 409. RSVP cancellation is not supported.",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/rsvp"
+          }
+        },
+        {
+          "name": "Duplicate RSVP (Expect HTTP 409)",
+          "description": "Send after a successful RSVP for the same event. Duplicate registration returns HTTP 409; there is no cancellation endpoint.",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/rsvp"
+          }
+        },
+        {
+          "name": "Get RSVP Count",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }],
+            "url": "{{base_url}}/events/{{event_id}}/rsvp-count"
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 - Lost and Found",
+      "item": [
+        {
+          "name": "Resolve Listing (Original Poster Only)",
+          "description": "Only the original poster may resolve, including when the caller is an admin. Other users receive 403; a cross-college listing receives 404.",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }],
+            "url": "{{base_url}}/lost-found/{{lost_found_id}}/resolve"
+          }
+        },
+        {
+          "name": "Remove Listing (Admin Moderation)",
+          "description": "Separate moderation/removal action. Deletion does not resolve the listing and is restricted to admins in the same college.",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{base_url}}/lost-found/{{lost_found_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 - Internships (Admin)",
+      "item": [
+        {
+          "name": "List Internships",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }],
+            "url": "{{base_url}}/internships"
+          }
+        },
+        {
+          "name": "Create Internship",
+          "event": [{ "listen": "test", "script": { "exec": ["var data = pm.response.json(); if (data.internship) pm.collectionVariables.set('internship_id', data.internship.id);"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Software Intern\",\n  \"company\": \"Example Co\"\n}" },
+            "url": "{{base_url}}/internships"
+          }
+        },
+        {
+          "name": "Update Internship",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"deadline\": \"2026-12-01\"\n}" },
+            "url": "{{base_url}}/internships/{{internship_id}}"
+          }
+        },
+        {
+          "name": "Delete Internship",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{base_url}}/internships/{{internship_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 - Placements (Admin)",
+      "item": [
+        {
+          "name": "List Placement Records",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }],
+            "url": "{{base_url}}/placement"
+          }
+        },
+        {
+          "name": "Create Placement Record",
+          "event": [{ "listen": "test", "script": { "exec": ["var data = pm.response.json(); if (data.placement) pm.collectionVariables.set('placement_id', data.placement.id);"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"company\": \"Example Corp\"\n}" },
+            "url": "{{base_url}}/placement"
+          }
+        },
+        {
+          "name": "Update Placement Record",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"eligibility\": \"All branches\"\n}" },
+            "url": "{{base_url}}/placement/{{placement_id}}"
+          }
+        },
+        {
+          "name": "Delete Placement Record",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{base_url}}/placement/{{placement_id}}"
           }
         }
       ]

@@ -102,18 +102,18 @@ router.patch('/:id/resolve', requireAuth, async (req, res) => {
       return res.status(404).json({ error: 'Listing not found' });
     }
 
-    // Only the reporter can confirm recovery or handover. Moderation is separate.
+    // Resolution belongs to the original poster, regardless of role.
     if (listing.poster_id !== req.user.id) {
       return res.status(403).json({ error: 'Only the person who posted this listing can resolve it' });
     }
     if (listing.status === 'resolved') return res.json({ listing });
 
-    // Mark as resolved
+    // Keep both tenant and owner constraints on the write itself.
     const { data, error } = await supabase
       .from('lost_found')
       .update({ status: 'resolved' })
       .eq('id', listingId)
-      .eq('college_id', req.user.collegeId) // Extra safety check
+      .eq('college_id', req.user.collegeId)
       .eq('poster_id', req.user.id)
       .select()
       .single();

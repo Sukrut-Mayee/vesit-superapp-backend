@@ -148,7 +148,7 @@ curl http://localhost:4000/health
 | :--- | :--- |
 | `student` | View all resources/schedules, upload notes, create lost & found items, RSVP to events, create peer-to-peer resource listings, request to borrow resources. |
 | `club_head` | All student capabilities + post updates/announcements for their assigned club (`POST /clubs/:id/posts`). |
-| `admin` | Full management: create timetable entries, publish events, delete/post internships and placements, delete peer listings, resolve any lost & found ticket. |
+| `admin` | Full management: create timetable entries, publish events, manage internships and placements, moderate peer listings, and manage college announcements. Lost & Found resolution remains limited to the original poster, including for admins. |
 
 ---
 
@@ -355,8 +355,8 @@ Redirects (302) to the Cloudinary asset download URL.
 
 #### `GET /events`
 Lists upcoming college events ordered by date and time.
-- Each event includes `rsvp_count` and `has_rsvpd` for the caller. RSVP user identities are not returned. These fields persist across refreshes.
-- RSVP cancellation is not supported; clients should show an already-registered state after success or HTTP 409.
+- Each event includes `rsvp_count` (total RSVPs) and `has_rsvpd` (whether the caller has RSVP'd). RSVP user identities are not returned; these fields are recalculated on each list response.
+- Duplicate RSVP attempts return HTTP `409 Conflict`. RSVP cancellation is not supported, so clients should keep the caller in the registered state after success.
 - **Auth**: `Bearer <token>`
 - **Response `200 OK`**:
 ```json
@@ -410,7 +410,7 @@ RSVP to an event for the authenticated user.
   }
 }
 ```
-*(Returns `409 Conflict` if the user has already RSVP'd).*
+Returns `409 Conflict` if the user has already RSVP'd. There is no cancellation endpoint.
 
 #### `GET /events/:id/rsvp-count`
 Gets the total number of attendees who RSVP'd.
@@ -601,8 +601,8 @@ Creates a lost or found report.
 
 #### `PATCH /lost-found/:id/resolve`
 Marks a lost/found listing as resolved.
-- **Auth**: `Bearer <token>` (poster only, including for admin accounts)
-- For a lost post, the poster confirms recovery. For a found post, the poster confirms handover to its owner. A different student or unrelated admin receives 403; cross-college/missing listings receive 404. Repeating resolution as the poster returns 200 without another update.
+- **Auth**: `Bearer <token>` (original poster only, even when the caller is an admin)
+- For a lost post, the poster confirms recovery. For a found post, the poster confirms handover to its owner. Any non-poster, including an admin, receives 403; cross-college/missing listings receive 404. Repeating resolution as the poster returns 200 without another update.
 - **Response `200 OK`**:
 ```json
 {
@@ -612,6 +612,11 @@ Marks a lost/found listing as resolved.
   }
 }
 ```
+
+#### `DELETE /lost-found/:id`
+Removes a listing as a separate moderation action; it does not resolve the listing.
+- **Auth**: `Bearer <token>` (`admin` only)
+- The listing must belong to the admin's college. A missing or other-college listing returns 404.
 
 ---
 
@@ -672,6 +677,12 @@ Deletes an internship posting.
 }
 ```
 
+#### `PATCH /internships/:id`
+Updates supplied internship fields (`title`, `company`, `department`, `year_eligible`, `deadline`, `apply_link`).
+- **Auth**: `Bearer <token>` (`admin` only; same-college records only)
+- At least one supported field is required; an empty update returns 400. A missing or other-college record returns 404.
+- **Response `200 OK`**: `{ "internship": { ... } }`
+
 ---
 
 ### Placements
@@ -712,6 +723,17 @@ Creates a placement drive entry.
   "placement": { ... }
 }
 ```
+
+#### `PATCH /placement/:id`
+Updates supplied placement fields (`company`, `eligibility`, `visit_date`).
+- **Auth**: `Bearer <token>` (`admin` only; same-college records only)
+- At least one supported field is required; an empty update returns 400. A missing or other-college record returns 404.
+- **Response `200 OK`**: `{ "placement": { ... } }`
+
+#### `DELETE /placement/:id`
+Deletes a placement drive record.
+- **Auth**: `Bearer <token>` (`admin` only; same-college records only)
+- **Response `200 OK`**: `{ "success": true, "message": "Placement record deleted successfully" }`
 
 ---
 
@@ -1236,6 +1258,20 @@ Admin endpoint: Bulk import attendance records for a division or subject batch.
 ```
 
 ---
+
+## Week 6 Verification Handoff
+
+This handoff separates local code/test evidence from live production verification. No production database operation was performed.
+
+| Area | Code-reviewed behavior | Verification status |
+| :--- | :--- | :--- |
+| Announcements | Authenticated college-scoped reads; admin-only create, update, and delete. The API filters by `college_id`; the backend uses the service-role Supabase client, so route-level scoping is essential. | Production table and RLS are reported created with one policy. Production CRUD and student visibility are **BLOCKED** pending the deployed API URL and role-specific tokens. |
+| Clubs | Posting/deleting club posts requires `club_head` and a matching `clubs.head_id`; club and post reads/writes include college scope. | Source reviewed; live role checks **BLOCKED** pending deployed API URL and role-specific tokens. |
+| Lost & Found | Optional `photo` upload (20 MB cap) is sent to Cloudinary; returned URL is stored as `photo_url` and included in listing reads. Resolution is poster-only for every role; admin deletion is separate moderation; reads and writes are college-scoped. | Local route tests cover poster-only authorization and tenant isolation. Live image upload/retrieval **BLOCKED** pending deployed API URL and usable auth token. |
+| Internships and placements | Create/update/delete routes require admin; database writes are scoped to the caller's college. | Source reviewed; live admin-write checks **BLOCKED** pending deployed API URL and admin token. |
+| Events and RSVPs | RSVP is college-checked and unique per event/user (duplicate returns 409); list returns count and caller state without RSVP identities; count endpoint uses an exact count and checks event college. | Local events test covers list count/state and identity privacy. Live RSVP/count behavior **BLOCKED** pending deployed API URL and student token. |
+
+The local environment file contains Supabase and Cloudinary configuration, but no deployed backend base URL, Render service URL, or role-specific bearer tokens were identified. Keep those secrets out of this handoff. The integration runner (`node test_runner.js`) hardcodes `http://localhost:4000` for the API while connecting to the Supabase project configured in `.env`; it creates users and records, changes user roles, and has no general cleanup pass. It was not run. Do not use it against production. No deployed behavior has been verified in this pass.
 
 ## Test Accounts & Credentials
 
