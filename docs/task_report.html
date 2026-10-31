@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CampusOne - Phase 1 & 2 Task Report - Tanvi</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 14mm 14mm 14mm 14mm;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #1f2937;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+    .header-card {
+      border: 1px solid #e5e7eb;
+      background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title h1 {
+      margin: 0 0 4px 0;
+      font-size: 20px;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .header-title p {
+      margin: 0;
+      font-size: 12px;
+      color: #475569;
+    }
+    .status-badge {
+      background: #10b981;
+      color: #ffffff;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    h2 {
+      font-size: 15px;
+      color: #1e3a8a;
+      border-bottom: 2px solid #3b82f6;
+      padding-bottom: 4px;
+      margin: 18px 0 10px 0;
+      font-weight: 700;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .member-report-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      row-gap: 6px;
+      column-gap: 12px;
+      font-size: 12px;
+    }
+    .member-report-grid .label {
+      font-weight: 600;
+      color: #334155;
+    }
+    .member-report-grid .value {
+      color: #0f172a;
+    }
+    .tag-yes {
+      display: inline-block;
+      background: #059669;
+      color: #ffffff;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0;
+      font-size: 11.5px;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 600;
+    }
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .font-bold { font-weight: 700; }
+    .checklist {
+      list-style: none;
+      padding-left: 0;
+      margin: 6px 0;
+    }
+    .checklist li {
+      padding: 3px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .check-icon {
+      color: #10b981;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .code-box {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      overflow-x: auto;
+      margin: 6px 0;
+    }
+    .avoid-break {
+      page-break-inside: avoid;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .footer {
+      margin-top: 16px;
+      font-size: 10px;
+      color: #64748b;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Banner -->
+  <div class="header-card">
+    <div class="header-title">
+      <h1>CampusOne Backend — Task & Verification Report</h1>
+      <p>Phase 1 & Phase 2 Delivery — VESIT Multi-Tenant SuperApp Backend</p>
+    </div>
+    <div>
+      <span class="status-badge">READY FOR HANDOFF</span>
+    </div>
+  </div>
+
+  <!-- Mandatory Team Member Submission -->
+  <h2>1. Team Member Status Report</h2>
+  <div class="card">
+    <div class="member-report-grid">
+      <div class="label">Name:</div>
+      <div class="value font-bold">Tanvi</div>
+
+      <div class="label">Assigned Task:</div>
+      <div class="value">Task 1 — Dummy Student Database + Attendance Data (3,200 profiles, 16,000 attendance records, reproducible seeds)</div>
+
+      <div class="label">Completed:</div>
+      <div class="value">
+        Generated 3,200 synthetic student profiles (exactly 800/year across FE, SE, TE, BE), 12 divisions/year across 6 branches, 60–70 students/division with FE smaller and SE larger distributions. Generated 16,000 consistent attendance records with validated constraints (<code style="background:#e2e8f0;padding:1px 4px;border-radius:3px;">attended &le; total</code>) and 2-decimal percentage formulas. Created migration 002, seeder utility, comprehensive coordination guide for Saumya, and 15-point automated verification suite.
+      </div>
+
+      <div class="label">Branch:</div>
+      <div class="value font-bold"><code>feature/tanvi-dummy-students-attendance</code></div>
+
+      <div class="label">PR Link:</div>
+      <div class="value"><a href="https://github.com/Sukrut-Mayee/vesit-superapp-backend/pull/new/feature/tanvi-dummy-students-attendance" style="color:#2563eb;text-decoration:none;">https://github.com/Sukrut-Mayee/vesit-superapp-backend/pull/new/feature/tanvi-dummy-students-attendance</a></div>
+
+      <div class="label">Recent Commits:</div>
+      <div class="value">
+        <code>f6ceb54</code> docs: add student database and attendance seed specification and coordination guide<br>
+        <code>ec78fc5</code> test(seed): add 15-point verification suite for student counts, allocations, and attendance calculations<br>
+        <code>fdd015c</code> feat(schema): add migration 002 for student profile attributes and students table<br>
+        <code>19396d5</code> feat(seed): add deterministic generator and 3,200 student + 16,000 attendance demo datasets
+      </div>
+
+      <div class="label">Tests Passed:</div>
+      <div class="value font-bold" style="color:#059669;">
+        21/21 Unit Tests Passed (<code style="background:#e2e8f0;padding:1px 4px;border-radius:3px;">npm test</code>) & 9/9 System Test Groups Passed (<code style="background:#e2e8f0;padding:1px 4px;border-radius:3px;">node test_suite.js</code>)
+      </div>
+
+      <div class="label">What is still failing:</div>
+      <div class="value"><strong>None.</strong> 100% of unit tests, integrity checks, and system integration suites passed with 0 errors.</div>
+
+      <div class="label">Blocked By:</div>
+      <div class="value"><strong>None.</strong> All deliverables completed, tested, and pushed to remote branch.</div>
+
+      <div class="label">Can next person start?</div>
+      <div class="value"><span class="tag-yes">YES</span> (Ready for Saumya and downstream teammates)</div>
+    </div>
+  </div>
+
+  <!-- Requirements Compliance Matrix -->
+  <h2>2. Requirements & Verification Checklist</h2>
+  <div class="card avoid-break">
+    <ul class="checklist">
+      <li><span class="check-icon">&#10004;</span> <strong>3,200 Dummy Student Profiles:</strong> Exactly 800 students per year across 4 academic years (FE, SE, TE, BE).</li>
+      <li><span class="check-icon">&#10004;</span> <strong>Branch & Division Allocations:</strong> Computer (3), IT (3), EXTC (2), ECS (1), ARO (1), AIDS (2) = 12 divisions per year, 48 total.</li>
+      <li><span class="check-icon">&#10004;</span> <strong>Division Sizes (60–70):</strong> Every single division strictly allocated between 60 and 70 students.</li>
+      <li><span class="check-icon">&#10004;</span> <strong>FE Smaller vs SE Larger Skew:</strong> First-Year divisions start down at 61 students with 6 divisions &le; 65; Second-Year divisions pushed up with 8 divisions &ge; 67 and all Computer/IT divisions at 68, preserving exact 800 totals.</li>
+      <li><span class="check-icon">&#10004;</span> <strong>100% Unique Identifiers:</strong> 3,200 unique UUIDs, 3,200 unique roll numbers, 3,200 unique emails on <code>@vesit.ves.ac.in</code> (0 collisions).</li>
+      <li><span class="check-icon">&#10004;</span> <strong>16,000 Attendance Records:</strong> 5 core subjects per student across branch curriculum; <code>attended &le; total</code> guaranteed; exact 2-decimal percentage formula.</li>
+      <li><span class="check-icon">&#10004;</span> <strong>Repeatable Seed Generator:</strong> Mulberry32 seeded PRNG produces byte-for-byte identical datasets on every run.</li>
+      <li><span class="check-icon">&#10004;</span> <strong>Safe Non-Destructive Migrations:</strong> Added migration 002 using <code>ADD COLUMN IF NOT EXISTS</code> and <code>ON CONFLICT</code> idempotent guards.</li>
+    </ul>
+  </div>
+
+  <!-- Division & Year Distribution Matrix -->
+  <div class="avoid-break">
+    <h2>3. Division & Student Distribution Matrix (Verified Counts)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Branch</th>
+          <th>Division</th>
+          <th class="text-center">First Year (FE)</th>
+          <th class="text-center">Second Year (SE)</th>
+          <th class="text-center">Third Year (TE)</th>
+          <th class="text-center">Final Year (BE)</th>
+          <th class="text-center">Total Students</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Computer (CMPN)</td><td>CMPN-A</td><td class="text-center">65</td><td class="text-center">68</td><td class="text-center">67</td><td class="text-center">67</td><td class="text-center font-bold">267</td></tr>
+        <tr><td>Computer (CMPN)</td><td>CMPN-B</td><td class="text-center">65</td><td class="text-center">68</td><td class="text-center">67</td><td class="text-center">67</td><td class="text-center font-bold">267</td></tr>
+        <tr><td>Computer (CMPN)</td><td>CMPN-C</td><td class="text-center">64</td><td class="text-center">68</td><td class="text-center">67</td><td class="text-center">67</td><td class="text-center font-bold">266</td></tr>
+        <tr><td>Information Tech (IT)</td><td>IT-A</td><td class="text-center">64</td><td class="text-center">68</td><td class="text-center">67</td><td class="text-center">67</td><td class="text-center font-bold">266</td></tr>
+        <tr><td>Information Tech (IT)</td><td>IT-B</td><td class="text-center">63</td><td class="text-center">68</td><td class="text-center">67</td><td class="text-center">67</td><td class="text-center font-bold">265</td></tr>
+        <tr><td>Information Tech (IT)</td><td>IT-C</td><td class="text-center">61 <em>(min)</em></td><td class="text-center">68</td><td class="text-center">67</td><td class="text-center">66</td><td class="text-center font-bold">262</td></tr>
+        <tr><td>Electronics & Telecom (EXTC)</td><td>EXTC-A</td><td class="text-center">69</td><td class="text-center">67</td><td class="text-center">67</td><td class="text-center">67</td><td class="text-center font-bold">270</td></tr>
+        <tr><td>Electronics & Telecom (EXTC)</td><td>EXTC-B</td><td class="text-center">69</td><td class="text-center">67</td><td class="text-center">67</td><td class="text-center">67</td><td class="text-center font-bold">270</td></tr>
+        <tr><td>Electronics & Comp Sci (ECS)</td><td>ECS-A</td><td class="text-center">70</td><td class="text-center">65</td><td class="text-center">66</td><td class="text-center">66</td><td class="text-center font-bold">267</td></tr>
+        <tr><td>Automation & Robotics (ARO)</td><td>ARO-A</td><td class="text-center">70</td><td class="text-center">65</td><td class="text-center">66</td><td class="text-center">66</td><td class="text-center font-bold">267</td></tr>
+        <tr><td>AI & Data Science (AIDS)</td><td>AIDS-A</td><td class="text-center">70</td><td class="text-center">64</td><td class="text-center">66</td><td class="text-center">67</td><td class="text-center font-bold">267</td></tr>
+        <tr><td>AI & Data Science (AIDS)</td><td>AIDS-B</td><td class="text-center">70</td><td class="text-center">64</td><td class="text-center">66</td><td class="text-center">66</td><td class="text-center font-bold">266</td></tr>
+        <tr style="background:#e2e8f0;">
+          <td colspan="2" class="font-bold">TOTAL STUDENTS PER YEAR</td>
+          <td class="text-center font-bold">800</td>
+          <td class="text-center font-bold">800</td>
+          <td class="text-center font-bold">800</td>
+          <td class="text-center font-bold">800</td>
+          <td class="text-center font-bold" style="color:#1e3a8a;">3,200</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- Deliverables & Schema Specification -->
+  <h2>4. Deliverable Files & Schema Specification (Handoff for Saumya)</h2>
+  <div class="card avoid-break">
+    <p>All seed artifacts are generated and persisted directly in the repository for immediate consumption by downstream modules:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>File Path</th>
+          <th>Format</th>
+          <th>Size / Records</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>data/students_seed.json</code></td>
+          <td>JSON</td>
+          <td>1.8 MB (3,200 items)</td>
+          <td>Full student objects: ID, name, email, roll number, year, branch, division, college_id, password_hash</td>
+        </tr>
+        <tr>
+          <td><code>data/attendance_seed.json</code></td>
+          <td>JSON</td>
+          <td>8.1 MB (16,000 items)</td>
+          <td>Full attendance records: student_id, roll_number, subject, attended, total, percentage, sem, year</td>
+        </tr>
+        <tr>
+          <td><code>data/seed_students_and_attendance.sql</code></td>
+          <td>SQL Script</td>
+          <td>4.0 MB (Batch insert)</td>
+          <td>Repeatable, idempotent SQL insert with <code>ON CONFLICT DO UPDATE</code></td>
+        </tr>
+        <tr>
+          <td><code>data/students_seed.csv</code></td>
+          <td>CSV</td>
+          <td>744 KB (3,200 rows)</td>
+          <td>Tabular student data for spreadsheets or ingestion scripts</td>
+        </tr>
+        <tr>
+          <td><code>data/attendance_seed.csv</code></td>
+          <td>CSV</td>
+          <td>3.6 MB (16,000 rows)</td>
+          <td>Tabular attendance records</td>
+        </tr>
+        <tr>
+          <td><code>docs/STUDENT_AND_ATTENDANCE_SEED.md</code></td>
+          <td>Markdown</td>
+          <td>10 KB</td>
+          <td>Complete schema contract, subject syllabus mapping, and coordination guide</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sample Payloads -->
+  <div class="avoid-break">
+    <h2>5. Schema Payloads & Attendance Formulas</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div>
+        <strong style="font-size:11px;">Student Profile Schema (`users` / `students`):</strong>
+        <div class="code-box">
+{
+  "id": "53e74ec1-cfc3-4152-a0c9-35d08c5cd93e",
+  "college_id": "81055c6a-4909-44e3-88a3-be6cff32635a",
+  "name": "Aarav Sharma",
+  "email": "aarav.sharma.fecmpna01@vesit.ves.ac.in",
+  "password_hash": "$2a$10$etLP...", // Password123!
+  "role": "student",
+  "trust_score": 12,
+  "roll_number": "FE-CMPN-A-01",
+  "year": "First Year",
+  "year_code": "FE",
+  "branch": "Computer",
+  "branch_code": "CMPN",
+  "division": "CMPN-A",
+  "division_letter": "A"
+}
+        </div>
+      </div>
+      <div>
+        <strong style="font-size:11px;">Attendance Record Schema (`attendance`):</strong>
+        <div class="code-box">
+{
+  "id": "8cb69823-3765-42ec-99bc-3b10b0e50974",
+  "college_id": "81055c6a-4909-44e3-88a3-be6cff32635a",
+  "student_id": "53e74ec1-cfc3-4152-a0c9-35d08c5cd93e",
+  "roll_number": "FE-CMPN-A-01",
+  "subject": "Engineering Mathematics I",
+  "attended_classes": 32,
+  "total_classes": 36,
+  "percentage": 88.89,
+  "semester": "SEM 1",
+  "division": "CMPN-A",
+  "academic_year": "2026-2027"
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verification Evidence & CLI Commands -->
+  <div class="avoid-break">
+    <h2>6. Execution & Verification Commands</h2>
+    <p>To run, regenerate, or verify the seed datasets locally:</p>
+    <div class="code-box">
+# 1. Regenerate 100% reproducible dummy data (Mulberry32 PRNG seed)
+node scripts/generate_demo_data.js
+
+# 2. Run complete automated 21-test verification suite
+npm test
+
+# 3. Dry-run database seeder without live DB queries
+node scripts/seed_database.js --dry-run
+
+# 4. Verify existing record counts in Supabase database
+node scripts/seed_database.js --verify-only
+    </div>
+  </div>
+
+  <div class="footer">
+    CampusOne SuperApp Backend &bull; Prepared by Tanvi &bull; Generated on October 31, 2026 &bull; Feature Branch: <code>feature/tanvi-dummy-students-attendance</code>
+  </div>
+
+</body>
+</html>
