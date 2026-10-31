@@ -358,8 +358,14 @@ create policy "attendance_student_isolation" on attendance for select
 -- Admins can insert/update/delete attendance for their college
 drop policy if exists "attendance_admin_modify" on attendance;
 create policy "attendance_admin_modify" on attendance for all
-  using (college_id = current_college_id())
-  with check (college_id = current_college_id());
+  using (
+    college_id = current_college_id()
+    and current_setting('request.jwt.claims', true)::json->>'app_role' = 'admin'
+  )
+  with check (
+    college_id = current_college_id()
+    and current_setting('request.jwt.claims', true)::json->>'app_role' = 'admin'
+  );
 
 
 -- ------------------------------------------------------------
