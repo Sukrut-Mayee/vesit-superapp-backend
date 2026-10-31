@@ -33,8 +33,17 @@ create table if not exists users (
   password_hash text not null,
   role text not null default 'student' check (role in ('student','club_head','admin')),
   trust_score integer not null default 0,
+  roll_number text,
+  year text,
+  branch text,
+  division text,
   created_at timestamptz not null default now()
 );
+
+alter table users add column if not exists roll_number text;
+alter table users add column if not exists year text;
+alter table users add column if not exists branch text;
+alter table users add column if not exists division text;
 
 -- ------------------------------------------------------------
 -- 3. TIMETABLE
@@ -349,6 +358,37 @@ create policy "attendance_student_isolation" on attendance for select
 -- Admins can insert/update/delete attendance for their college
 drop policy if exists "attendance_admin_modify" on attendance;
 create policy "attendance_admin_modify" on attendance for all
+  using (college_id = current_college_id())
+  with check (college_id = current_college_id());
+
+
+-- ------------------------------------------------------------
+-- 12. STUDENTS
+-- ------------------------------------------------------------
+create table if not exists students (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid unique references users(id) on delete cascade,
+  college_id uuid not null references colleges(id) on delete cascade,
+  name text not null,
+  email text unique not null,
+  roll_number text unique not null,
+  year text not null,
+  year_code text,
+  branch text not null,
+  branch_code text,
+  division text not null,
+  division_letter text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_students_college on students(college_id);
+create index if not exists idx_students_division on students(college_id, division);
+create index if not exists idx_students_year on students(college_id, year);
+create index if not exists idx_students_branch on students(college_id, branch);
+alter table students enable row level security;
+
+drop policy if exists "students_isolation" on students;
+create policy "students_isolation" on students for all
   using (college_id = current_college_id())
   with check (college_id = current_college_id());
 

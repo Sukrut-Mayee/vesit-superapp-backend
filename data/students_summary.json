@@ -1,0 +1,518 @@
+{
+  "meta": {
+    "generatedAt": "2026-10-31T09:13:49.663Z",
+    "seed": 424242,
+    "totalStudents": 3200,
+    "totalAttendanceRecords": 16000,
+    "collegeId": "81055c6a-4909-44e3-88a3-be6cff32635a",
+    "emailDomain": "vesit.ves.ac.in"
+  },
+  "yearStats": {
+    "FE": {
+      "year": "First Year",
+      "totalStudents": 800,
+      "divisions": {
+        "CMPN-A": 65,
+        "CMPN-B": 65,
+        "CMPN-C": 64,
+        "IT-A": 64,
+        "IT-B": 63,
+        "IT-C": 61,
+        "EXTC-A": 69,
+        "EXTC-B": 69,
+        "ECS-A": 70,
+        "ARO-A": 70,
+        "AIDS-A": 70,
+        "AIDS-B": 70
+      }
+    },
+    "SE": {
+      "year": "Second Year",
+      "totalStudents": 800,
+      "divisions": {
+        "CMPN-A": 68,
+        "CMPN-B": 68,
+        "CMPN-C": 68,
+        "IT-A": 68,
+        "IT-B": 68,
+        "IT-C": 68,
+        "EXTC-A": 67,
+        "EXTC-B": 67,
+        "ECS-A": 65,
+        "ARO-A": 65,
+        "AIDS-A": 64,
+        "AIDS-B": 64
+      }
+    },
+    "TE": {
+      "year": "Third Year",
+      "totalStudents": 800,
+      "divisions": {
+        "CMPN-A": 67,
+        "CMPN-B": 67,
+        "CMPN-C": 67,
+        "IT-A": 67,
+        "IT-B": 67,
+        "IT-C": 67,
+        "EXTC-A": 67,
+        "EXTC-B": 67,
+        "ECS-A": 66,
+        "ARO-A": 66,
+        "AIDS-A": 66,
+        "AIDS-B": 66
+      }
+    },
+    "BE": {
+      "year": "Final Year",
+      "totalStudents": 800,
+      "divisions": {
+        "CMPN-A": 67,
+        "CMPN-B": 67,
+        "CMPN-C": 67,
+        "IT-A": 67,
+        "IT-B": 67,
+        "IT-C": 66,
+        "EXTC-A": 67,
+        "EXTC-B": 67,
+        "ECS-A": 66,
+        "ARO-A": 66,
+        "AIDS-A": 67,
+        "AIDS-B": 66
+      }
+    }
+  },
+  "divisionStats": {
+    "FE-CMPN-A": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-A",
+      "divisionLetter": "A",
+      "count": 65
+    },
+    "FE-CMPN-B": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-B",
+      "divisionLetter": "B",
+      "count": 65
+    },
+    "FE-CMPN-C": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-C",
+      "divisionLetter": "C",
+      "count": 64
+    },
+    "FE-IT-A": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-A",
+      "divisionLetter": "A",
+      "count": 64
+    },
+    "FE-IT-B": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-B",
+      "divisionLetter": "B",
+      "count": 63
+    },
+    "FE-IT-C": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-C",
+      "divisionLetter": "C",
+      "count": 61
+    },
+    "FE-EXTC-A": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "EXTC",
+      "branchCode": "EXTC",
+      "divisionName": "EXTC-A",
+      "divisionLetter": "A",
+      "count": 69
+    },
+    "FE-EXTC-B": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "EXTC",
+      "branchCode": "EXTC",
+      "divisionName": "EXTC-B",
+      "divisionLetter": "B",
+      "count": 69
+    },
+    "FE-ECS-A": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "ECS",
+      "branchCode": "ECS",
+      "divisionName": "ECS-A",
+      "divisionLetter": "A",
+      "count": 70
+    },
+    "FE-ARO-A": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "ARO",
+      "branchCode": "ARO",
+      "divisionName": "ARO-A",
+      "divisionLetter": "A",
+      "count": 70
+    },
+    "FE-AIDS-A": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "AIDS",
+      "branchCode": "AIDS",
+      "divisionName": "AIDS-A",
+      "divisionLetter": "A",
+      "count": 70
+    },
+    "FE-AIDS-B": {
+      "year": "First Year",
+      "yearCode": "FE",
+      "branch": "AIDS",
+      "branchCode": "AIDS",
+      "divisionName": "AIDS-B",
+      "divisionLetter": "B",
+      "count": 70
+    },
+    "SE-CMPN-A": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-A",
+      "divisionLetter": "A",
+      "count": 68
+    },
+    "SE-CMPN-B": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-B",
+      "divisionLetter": "B",
+      "count": 68
+    },
+    "SE-CMPN-C": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-C",
+      "divisionLetter": "C",
+      "count": 68
+    },
+    "SE-IT-A": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-A",
+      "divisionLetter": "A",
+      "count": 68
+    },
+    "SE-IT-B": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-B",
+      "divisionLetter": "B",
+      "count": 68
+    },
+    "SE-IT-C": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-C",
+      "divisionLetter": "C",
+      "count": 68
+    },
+    "SE-EXTC-A": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "EXTC",
+      "branchCode": "EXTC",
+      "divisionName": "EXTC-A",
+      "divisionLetter": "A",
+      "count": 67
+    },
+    "SE-EXTC-B": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "EXTC",
+      "branchCode": "EXTC",
+      "divisionName": "EXTC-B",
+      "divisionLetter": "B",
+      "count": 67
+    },
+    "SE-ECS-A": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "ECS",
+      "branchCode": "ECS",
+      "divisionName": "ECS-A",
+      "divisionLetter": "A",
+      "count": 65
+    },
+    "SE-ARO-A": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "ARO",
+      "branchCode": "ARO",
+      "divisionName": "ARO-A",
+      "divisionLetter": "A",
+      "count": 65
+    },
+    "SE-AIDS-A": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "AIDS",
+      "branchCode": "AIDS",
+      "divisionName": "AIDS-A",
+      "divisionLetter": "A",
+      "count": 64
+    },
+    "SE-AIDS-B": {
+      "year": "Second Year",
+      "yearCode": "SE",
+      "branch": "AIDS",
+      "branchCode": "AIDS",
+      "divisionName": "AIDS-B",
+      "divisionLetter": "B",
+      "count": 64
+    },
+    "TE-CMPN-A": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-A",
+      "divisionLetter": "A",
+      "count": 67
+    },
+    "TE-CMPN-B": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-B",
+      "divisionLetter": "B",
+      "count": 67
+    },
+    "TE-CMPN-C": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-C",
+      "divisionLetter": "C",
+      "count": 67
+    },
+    "TE-IT-A": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-A",
+      "divisionLetter": "A",
+      "count": 67
+    },
+    "TE-IT-B": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-B",
+      "divisionLetter": "B",
+      "count": 67
+    },
+    "TE-IT-C": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-C",
+      "divisionLetter": "C",
+      "count": 67
+    },
+    "TE-EXTC-A": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "EXTC",
+      "branchCode": "EXTC",
+      "divisionName": "EXTC-A",
+      "divisionLetter": "A",
+      "count": 67
+    },
+    "TE-EXTC-B": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "EXTC",
+      "branchCode": "EXTC",
+      "divisionName": "EXTC-B",
+      "divisionLetter": "B",
+      "count": 67
+    },
+    "TE-ECS-A": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "ECS",
+      "branchCode": "ECS",
+      "divisionName": "ECS-A",
+      "divisionLetter": "A",
+      "count": 66
+    },
+    "TE-ARO-A": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "ARO",
+      "branchCode": "ARO",
+      "divisionName": "ARO-A",
+      "divisionLetter": "A",
+      "count": 66
+    },
+    "TE-AIDS-A": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "AIDS",
+      "branchCode": "AIDS",
+      "divisionName": "AIDS-A",
+      "divisionLetter": "A",
+      "count": 66
+    },
+    "TE-AIDS-B": {
+      "year": "Third Year",
+      "yearCode": "TE",
+      "branch": "AIDS",
+      "branchCode": "AIDS",
+      "divisionName": "AIDS-B",
+      "divisionLetter": "B",
+      "count": 66
+    },
+    "BE-CMPN-A": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-A",
+      "divisionLetter": "A",
+      "count": 67
+    },
+    "BE-CMPN-B": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-B",
+      "divisionLetter": "B",
+      "count": 67
+    },
+    "BE-CMPN-C": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "Computer",
+      "branchCode": "CMPN",
+      "divisionName": "CMPN-C",
+      "divisionLetter": "C",
+      "count": 67
+    },
+    "BE-IT-A": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-A",
+      "divisionLetter": "A",
+      "count": 67
+    },
+    "BE-IT-B": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-B",
+      "divisionLetter": "B",
+      "count": 67
+    },
+    "BE-IT-C": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "IT",
+      "branchCode": "IT",
+      "divisionName": "IT-C",
+      "divisionLetter": "C",
+      "count": 66
+    },
+    "BE-EXTC-A": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "EXTC",
+      "branchCode": "EXTC",
+      "divisionName": "EXTC-A",
+      "divisionLetter": "A",
+      "count": 67
+    },
+    "BE-EXTC-B": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "EXTC",
+      "branchCode": "EXTC",
+      "divisionName": "EXTC-B",
+      "divisionLetter": "B",
+      "count": 67
+    },
+    "BE-ECS-A": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "ECS",
+      "branchCode": "ECS",
+      "divisionName": "ECS-A",
+      "divisionLetter": "A",
+      "count": 66
+    },
+    "BE-ARO-A": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "ARO",
+      "branchCode": "ARO",
+      "divisionName": "ARO-A",
+      "divisionLetter": "A",
+      "count": 66
+    },
+    "BE-AIDS-A": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "AIDS",
+      "branchCode": "AIDS",
+      "divisionName": "AIDS-A",
+      "divisionLetter": "A",
+      "count": 67
+    },
+    "BE-AIDS-B": {
+      "year": "Final Year",
+      "yearCode": "BE",
+      "branch": "AIDS",
+      "branchCode": "AIDS",
+      "divisionName": "AIDS-B",
+      "divisionLetter": "B",
+      "count": 66
+    }
+  }
+}
