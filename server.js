@@ -15,6 +15,7 @@ const borrowRequestsRoutes = require('./routes/borrow_requests');
 const donationsRoutes = require('./routes/donations');
 const announcementsRoutes = require('./routes/announcements');
 const attendanceRoutes = require('./routes/attendance');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/borrow-requests', borrowRequestsRoutes);
 app.use('/donations', donationsRoutes);
 app.use('/announcements', announcementsRoutes);
 app.use('/attendance', attendanceRoutes);
+app.use('/admin', adminRoutes);
 
 // Fallback error handler
 app.use((err, req, res, next) => {

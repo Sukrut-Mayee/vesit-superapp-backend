@@ -6,7 +6,11 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test test/*.test.js",
+    "test:system": "node test_suite.js",
+    "seed:generate": "node scripts/generate_demo_data.js",
+    "seed:db": "node scripts/seed_database.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
