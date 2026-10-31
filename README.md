@@ -1292,4 +1292,34 @@ The following pre-configured test accounts are ready for testing on the live/loc
 A complete Postman Collection is included at [`postman_collection.json`](./postman_collection.json).
 Import it into Postman to test all endpoints with pre-configured requests, environment variables, and authentication flows.
 
+---
+
+## Dummy Student Database & Attendance Seed
+
+For enterprise demo and integration testing, CampusOne includes a 100% reproducible dummy student and attendance dataset:
+
+- **3,200 Student Profiles**: Exactly 800 students per year across 4 academic years (First Year, Second Year, Third Year, Final Year).
+- **Branch & Division Distribution**: 12 divisions per academic year (48 total):
+  - Computer (3 divisions), IT (3 divisions), EXTC (2 divisions), ECS (1 division), ARO (1 division), AIDS (2 divisions).
+  - Strictly 60–70 students per division.
+  - First-year divisions are generally smaller (starting at 61) and second-year divisions are generally larger (mostly 68s), preserving exact totals.
+- **Identifiers**: Unique deterministic UUIDs, synthetic Indian names, `@vesit.ves.ac.in` emails, roll numbers (`FE-CMPN-A-01`), year, branch, division, college ID.
+- **16,000 Attendance Records**: Generated across core engineering curriculum subjects per branch. Validated: `attended_classes <= total_classes`, accurate 2-decimal percentages, and composite uniqueness on `(college_id, student_id, subject, semester)`.
+- **Coordination Document**: Detailed schema specifications and contract details for Saumya and downstream services are documented in [`docs/STUDENT_AND_ATTENDANCE_SEED.md`](./docs/STUDENT_AND_ATTENDANCE_SEED.md).
+
+### Seed Commands
+
+```bash
+# 1. Regenerate reproducible datasets (outputs to data/ directory)
+npm run seed:generate
+
+# 2. Run automated validation & integrity tests (15 checks)
+npm test
+
+# 3. Dry-run database seeding
+npm run seed:db -- --dry-run
+
+# 4. Verify existing database counts
+npm run seed:db -- --verify-only
+```
 
