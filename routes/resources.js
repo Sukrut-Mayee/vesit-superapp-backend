@@ -1,16 +1,57 @@
 const express = require('express');
+const path = require('path');
 const multer = require('multer');
 const supabase = require('../services/supabase');
-const { uploadToCloudinary } = require('../services/cloudinary');
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+  isValidImageSignature,
+  ALLOWED_IMAGE_MIMES,
+  ALLOWED_IMAGE_EXTS
+} = require('../services/cloudinary');
 const { requireAuth, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Memory storage for direct stream to Cloudinary
+// Memory storage for direct stream to Cloudinary with MIME validation
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 20 * 1024 * 1024 } // 20 MB cap
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB cap per file
+  fileFilter: (req, file, cb) => {
+    const mime = (file.mimetype || '').toLowerCase();
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    if (!ALLOWED_IMAGE_MIMES.has(mime) && !ALLOWED_IMAGE_EXTS.has(ext)) {
+      const err = new Error('Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed.');
+      err.code = 'INVALID_FILE_TYPE';
+      return cb(err, false);
+    }
+    cb(null, true);
+  }
 });
+
+/**
+ * Wraps upload.array('images', 5) with structured error responses for Multer errors
+ */
+const uploadImagesMiddleware = (req, res, next) => {
+  upload.array('images', 5)(req, res, (err) => {
+    if (!err) return next();
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({ error: 'File too large. Maximum allowed size is 20 MB per file.' });
+      }
+      if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+        return res.status(400).json({
+          error: `Upload error: Maximum 5 images allowed, or unexpected field "${err.field}". Resource images must use the "images" field.`
+        });
+      }
+      return res.status(400).json({ error: `Upload error: ${err.message}` });
+    }
+    if (err.code === 'INVALID_FILE_TYPE') {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(400).json({ error: err.message || 'Invalid upload request' });
+  });
+};
 
 // GET /resources
 // Returns resources for the authenticated user's college.
@@ -97,7 +138,9 @@ router.get('/:id', requireAuth, async (req, res) => {
 // POST /resources
 // Allowed role: student or admin
 // Supports multipart/form-data (files in 'images') and application/json (image_urls array)
-router.post('/', requireAuth, upload.array('images', 5), async (req, res) => {
+router.post('/', requireAuth, uploadImagesMiddleware, async (req, res) => {
+  const newUploads = [];
+  let createdResourceId = null;
   try {
     let { title, category, condition, listing_type, image_urls } = req.body;
 
@@ -118,30 +161,45 @@ router.post('/', requireAuth, upload.array('images', 5), async (req, res) => {
         try {
           finalImageUrls = JSON.parse(image_urls);
         } catch (e) {
-          finalImageUrls = [image_urls];
+          if (image_urls.trim()) finalImageUrls = [image_urls.trim()];
         }
       } else if (Array.isArray(image_urls)) {
         finalImageUrls = [...image_urls];
       }
     }
 
-    // Upload any attached files to Cloudinary
+    // Process uploaded image files
     if (req.files && req.files.length > 0) {
+      if (req.files.length > 5) {
+        return res.status(400).json({ error: 'Maximum 5 images allowed per resource.' });
+      }
+
+      // 1. Verify signatures of all files BEFORE starting any upload
       for (const file of req.files) {
-        const uploaded = await uploadToCloudinary(file.buffer, 'campusone/resources');
+        if (!isValidImageSignature(file.buffer)) {
+          return res.status(400).json({
+            error: `File "${file.originalname}" does not have valid image content.`
+          });
+        }
+      }
+
+      // 2. Stream to Cloudinary
+      for (const file of req.files) {
+        const uploaded = await uploadToCloudinary(file.buffer, 'campusone/resources', 'image');
+        newUploads.push(uploaded);
         finalImageUrls.push(uploaded.url);
       }
     }
 
-    // Insert resource record
+    // Insert resource record into Supabase
     const { data: resource, error } = await supabase
       .from('resources')
       .insert({
         college_id: req.user.collegeId,
         owner_id: req.user.id,
-        title,
-        category,
-        condition: condition || null,
+        title: title.trim(),
+        category: category.trim(),
+        condition: condition ? condition.trim() : null,
         listing_type,
         status: 'AVAILABLE',
         image_urls: finalImageUrls
@@ -158,10 +216,11 @@ router.post('/', requireAuth, upload.array('images', 5), async (req, res) => {
       .single();
 
     if (error) throw error;
+    createdResourceId = resource.id;
 
     // If listing_type is 'donate', auto-register in donations table
     if (listing_type === 'donate') {
-      await supabase
+      const { error: donError } = await supabase
         .from('donations')
         .insert({
           college_id: req.user.collegeId,
@@ -169,11 +228,26 @@ router.post('/', requireAuth, upload.array('images', 5), async (req, res) => {
           resource_id: resource.id,
           verified: false
         });
+
+      if (donError) {
+        throw donError;
+      }
     }
 
     res.status(201).json({ resource });
   } catch (err) {
     console.error('create resource error', err);
+    // Rollback any newly uploaded images if resource creation failed
+    if (newUploads.length > 0) {
+      await Promise.allSettled(newUploads.map(u => deleteFromCloudinary(u.publicId, u.resourceType)));
+    }
+    // Rollback created resource if subsequent donation insertion failed
+    if (createdResourceId) {
+      await supabase.from('resources').delete().eq('id', createdResourceId).catch(() => {});
+    }
+    if (err.code === 'CLOUDINARY_NOT_CONFIGURED') {
+      return res.status(503).json({ error: 'Image upload service is temporarily unavailable.' });
+    }
     res.status(500).json({ error: 'Could not create resource' });
   }
 });
@@ -181,7 +255,8 @@ router.post('/', requireAuth, upload.array('images', 5), async (req, res) => {
 // PATCH /resources/:id
 // Update resource (Owner or Admin only)
 // Supports updating details, status, or appending uploaded images
-router.patch('/:id', requireAuth, upload.array('images', 5), async (req, res) => {
+router.patch('/:id', requireAuth, uploadImagesMiddleware, async (req, res) => {
+  const newUploads = [];
   try {
     const resourceId = req.params.id;
 
@@ -205,9 +280,9 @@ router.patch('/:id', requireAuth, upload.array('images', 5), async (req, res) =>
     const { title, category, condition, listing_type, status, image_urls } = req.body;
 
     const updates = {};
-    if (title !== undefined) updates.title = title;
-    if (category !== undefined) updates.category = category;
-    if (condition !== undefined) updates.condition = condition;
+    if (title !== undefined) updates.title = title.trim();
+    if (category !== undefined) updates.category = category.trim();
+    if (condition !== undefined) updates.condition = condition ? condition.trim() : null;
     if (listing_type !== undefined) {
       if (!['lend', 'donate'].includes(listing_type)) {
         return res.status(400).json({ error: 'listing_type must be either "lend" or "donate"' });
@@ -225,7 +300,7 @@ router.patch('/:id', requireAuth, upload.array('images', 5), async (req, res) =>
         try {
           currentImages = JSON.parse(image_urls);
         } catch (e) {
-          currentImages = [image_urls];
+          if (image_urls.trim()) currentImages = [image_urls.trim()];
         }
       } else if (Array.isArray(image_urls)) {
         currentImages = image_urls;
@@ -233,8 +308,22 @@ router.patch('/:id', requireAuth, upload.array('images', 5), async (req, res) =>
     }
 
     if (req.files && req.files.length > 0) {
+      if (currentImages.length + req.files.length > 5) {
+        return res.status(400).json({ error: 'Resource cannot have more than 5 images in total.' });
+      }
+
+      // Verify signatures of new files
       for (const file of req.files) {
-        const uploaded = await uploadToCloudinary(file.buffer, 'campusone/resources');
+        if (!isValidImageSignature(file.buffer)) {
+          return res.status(400).json({
+            error: `File "${file.originalname}" does not have valid image content.`
+          });
+        }
+      }
+
+      for (const file of req.files) {
+        const uploaded = await uploadToCloudinary(file.buffer, 'campusone/resources', 'image');
+        newUploads.push(uploaded);
         currentImages.push(uploaded.url);
       }
       updates.image_urls = currentImages;
@@ -263,6 +352,13 @@ router.patch('/:id', requireAuth, upload.array('images', 5), async (req, res) =>
     res.json({ resource: updatedResource });
   } catch (err) {
     console.error('update resource error', err);
+    // Rollback only newly uploaded assets, not existing ones
+    if (newUploads.length > 0) {
+      await Promise.allSettled(newUploads.map(u => deleteFromCloudinary(u.publicId, u.resourceType)));
+    }
+    if (err.code === 'CLOUDINARY_NOT_CONFIGURED') {
+      return res.status(503).json({ error: 'Image upload service is temporarily unavailable.' });
+    }
     res.status(500).json({ error: 'Could not update resource' });
   }
 });

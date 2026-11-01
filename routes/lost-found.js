@@ -1,16 +1,57 @@
 const express = require('express');
+const path = require('path');
 const multer = require('multer');
 const supabase = require('../services/supabase');
-const { uploadToCloudinary } = require('../services/cloudinary');
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+  isValidImageSignature,
+  ALLOWED_IMAGE_MIMES,
+  ALLOWED_IMAGE_EXTS
+} = require('../services/cloudinary');
 const { requireAuth, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Memory storage for direct stream to Cloudinary
+// Memory storage for direct stream to Cloudinary with MIME validation
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 20 * 1024 * 1024 } // 20 MB cap
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB cap
+  fileFilter: (req, file, cb) => {
+    const mime = (file.mimetype || '').toLowerCase();
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    if (!ALLOWED_IMAGE_MIMES.has(mime) && !ALLOWED_IMAGE_EXTS.has(ext)) {
+      const err = new Error('Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed.');
+      err.code = 'INVALID_FILE_TYPE';
+      return cb(err, false);
+    }
+    cb(null, true);
+  }
 });
+
+/**
+ * Wraps upload.single('photo') with structured error responses for Multer errors
+ */
+const uploadPhotoMiddleware = (req, res, next) => {
+  upload.single('photo')(req, res, (err) => {
+    if (!err) return next();
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({ error: 'File too large. Maximum allowed size is 20 MB.' });
+      }
+      if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+        return res.status(400).json({
+          error: `Unexpected field "${err.field}". Lost & Found photos must use the "photo" field.`
+        });
+      }
+      return res.status(400).json({ error: `Upload error: ${err.message}` });
+    }
+    if (err.code === 'INVALID_FILE_TYPE') {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(400).json({ error: err.message || 'Invalid upload request' });
+  });
+};
 
 // GET /lost-found
 router.get('/', requireAuth, async (req, res) => {
@@ -45,23 +86,33 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 // POST /lost-found (multipart/form-data: type, description, [photo])
-router.post('/', requireAuth, upload.single('photo'), async (req, res) => {
+router.post('/', requireAuth, uploadPhotoMiddleware, async (req, res) => {
+  let uploadedPublicId = null;
   try {
     const { type, description } = req.body;
 
-    if (!type || !description) {
+    if (!type || !description || !description.trim()) {
       return res.status(400).json({ error: 'type and description are required' });
     }
-    
-    if (type !== 'lost' && type !== 'found') {
+
+    const trimmedType = type.trim().toLowerCase();
+    if (trimmedType !== 'lost' && trimmedType !== 'found') {
       return res.status(400).json({ error: 'type must be exactly "lost" or "found"' });
     }
 
     let photoUrl = null;
     if (req.file) {
-      // Upload to Cloudinary using the existing pattern
-      const uploaded = await uploadToCloudinary(req.file.buffer, 'campusone/lost-found');
+      // Validate magic bytes to prevent forged file extensions
+      if (!isValidImageSignature(req.file.buffer)) {
+        return res.status(400).json({
+          error: 'Invalid image file content. File does not match a supported image signature.'
+        });
+      }
+
+      // Stream to Cloudinary
+      const uploaded = await uploadToCloudinary(req.file.buffer, 'campusone/lost-found', 'image');
       photoUrl = uploaded.url;
+      uploadedPublicId = uploaded.publicId;
     }
 
     const { data, error } = await supabase
@@ -69,8 +120,8 @@ router.post('/', requireAuth, upload.single('photo'), async (req, res) => {
       .insert({
         college_id: req.user.collegeId,
         poster_id: req.user.id,
-        type,
-        description,
+        type: trimmedType,
+        description: description.trim(),
         photo_url: photoUrl,
         status: 'open'
       })
@@ -78,9 +129,19 @@ router.post('/', requireAuth, upload.single('photo'), async (req, res) => {
       .single();
 
     if (error) throw error;
+
     res.status(201).json({ listing: data });
   } catch (err) {
     console.error('create lost-found error', err);
+    // Rollback newly uploaded asset if database persistence fails
+    if (uploadedPublicId) {
+      await deleteFromCloudinary(uploadedPublicId, 'image').catch((cleanupErr) => {
+        console.error('[LostFound] Rollback failed after DB error:', cleanupErr.message || cleanupErr);
+      });
+    }
+    if (err.code === 'CLOUDINARY_NOT_CONFIGURED') {
+      return res.status(503).json({ error: 'Image upload service is temporarily unavailable.' });
+    }
     res.status(500).json({ error: 'Could not create listing' });
   }
 });

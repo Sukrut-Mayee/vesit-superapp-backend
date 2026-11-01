@@ -32,7 +32,7 @@ router.get('/me', requireAuth, async (req, res) => {
       .order('subject', { ascending: true });
 
     if (semester) {
-      query = query.eq('semester', semester);
+      if (semester.trim()) query = query.eq('semester', semester.trim());
     }
     if (academic_year) {
       query = query.eq('academic_year', academic_year);
@@ -90,17 +90,23 @@ router.get('/me/:subject', requireAuth, async (req, res) => {
       .ilike('subject', subject);
 
     if (semester) {
-      query = query.eq('semester', semester);
+      if (semester.trim()) query = query.eq('semester', semester.trim());
     }
 
-    const { data, error } = await query.maybeSingle();
+    const { data, error } = await query;
     if (error) throw error;
 
-    if (!data) {
+    if (!data || data.length === 0) {
       return res.status(404).json({ error: `No attendance record found for subject "${subject}"` });
     }
 
-    res.json({ attendance: data });
+    if (data.length > 1) {
+      return res.status(400).json({
+        error: `Multiple attendance records found for subject "${subject}". Please specify a semester query parameter.`
+      });
+    }
+
+    res.json({ attendance: data[0] });
   } catch (err) {
     console.error('get subject attendance error', err);
     res.status(500).json({ error: 'Could not fetch subject attendance' });
@@ -178,7 +184,7 @@ router.get('/student/:student_id', requireAuth, async (req, res) => {
       .order('subject', { ascending: true });
 
     if (semester) {
-      query = query.eq('semester', semester);
+      if (semester.trim()) query = query.eq('semester', semester.trim());
     }
 
     const { data, error } = await query;
