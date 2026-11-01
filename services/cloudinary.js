@@ -17,7 +17,6 @@ function uploadToCloudinary(fileBuffer, folder = 'campusone/notes') {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder,
         resource_type: 'auto' // handles pdf, image, etc.
       },
       (error, result) => {
