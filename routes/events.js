@@ -4,6 +4,21 @@ const { requireAuth, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Helper for calendar date validation
+function isValidDate(dateString) {
+  const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+  if (!regex.test(dateString)) return false;
+  const [year, month, day] = dateString.split('-').map(Number);
+  const d = new Date(year, month - 1, day);
+  return d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day;
+}
+
+// Helper for time validation
+function isValidTime(timeString) {
+  const regex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+  return regex.test(timeString);
+}
+
 // GET /events
 router.get('/', requireAuth, async (req, res) => {
   try {
@@ -14,7 +29,7 @@ router.get('/', requireAuth, async (req, res) => {
       .eq('college_id', req.user.collegeId)
       .gte('date', today)
       .order('date', { ascending: true })
-      .order('time', { ascending: true }); // Secondary order by time if available
+      .order('time', { ascending: true });
 
     if (error) throw error;
     const events = (data || []).map(({ event_rsvps: rsvps = [], ...event }) => ({
@@ -22,7 +37,6 @@ router.get('/', requireAuth, async (req, res) => {
       rsvp_count: rsvps.length,
       has_rsvpd: rsvps.some(rsvp => rsvp.user_id === req.user.id)
     }));
-    // Do not expose other students' RSVP identities to the client.
     res.json({ events });
   } catch (err) {
     console.error('list events error', err);
@@ -34,9 +48,22 @@ router.get('/', requireAuth, async (req, res) => {
 router.post('/', requireAuth, requireRole('admin'), async (req, res) => {
   try {
     const { title, description, date, time, venue } = req.body;
-    
+
     if (!title || !date) {
       return res.status(400).json({ error: 'title and date are required' });
+    }
+
+    if (!isValidDate(date)) {
+      return res.status(400).json({ error: 'Invalid calendar date. Use YYYY-MM-DD' });
+    }
+
+    if (time && !isValidTime(time)) {
+      return res.status(400).json({ error: 'Invalid time format. Use HH:mm (24-hour format)' });
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    if (date < today) {
+      return res.status(400).json({ error: 'Event date cannot be in the past' });
     }
 
     const { data, error } = await supabase
@@ -65,7 +92,6 @@ router.post('/:id/rsvp', requireAuth, async (req, res) => {
   try {
     const eventId = req.params.id;
 
-    // Verify event exists and belongs to user's college
     const { data: event, error: eventError } = await supabase
       .from('events')
       .select('id, college_id')
@@ -77,7 +103,6 @@ router.post('/:id/rsvp', requireAuth, async (req, res) => {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    // Insert RSVP
     const { data, error } = await supabase
       .from('event_rsvps')
       .insert({
@@ -88,8 +113,7 @@ router.post('/:id/rsvp', requireAuth, async (req, res) => {
       .single();
 
     if (error) {
-      // Handle duplicate RSVP based on unique constraint (event_id, user_id)
-      if (error.code === '23505') { // Postgres unique_violation
+      if (error.code === '23505') {
         return res.status(409).json({ error: 'Already RSVPed to this event' });
       }
       throw error;
@@ -107,7 +131,6 @@ router.get('/:id/rsvp-count', requireAuth, async (req, res) => {
   try {
     const eventId = req.params.id;
 
-    // Verify event exists and belongs to user's college
     const { data: event, error: eventError } = await supabase
       .from('events')
       .select('id, college_id')
@@ -119,7 +142,6 @@ router.get('/:id/rsvp-count', requireAuth, async (req, res) => {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    // Get RSVP count
     const { count, error } = await supabase
       .from('event_rsvps')
       .select('*', { count: 'exact', head: true })
@@ -152,6 +174,34 @@ router.patch('/:id', requireAuth, requireRole('admin'), async (req, res) => {
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    // Fetch current record to validate final state
+    const { data: currentEvent, error: fetchError } = await supabase
+      .from('events')
+      .select('date, time')
+      .eq('id', eventId)
+      .eq('college_id', req.user.collegeId)
+      .single();
+
+    if (fetchError || !currentEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const finalDate = updates.date || currentEvent.date;
+    const finalTime = updates.time !== undefined ? updates.time : currentEvent.time;
+
+    if (!isValidDate(finalDate)) {
+      return res.status(400).json({ error: 'Invalid calendar date. Use YYYY-MM-DD' });
+    }
+
+    if (finalTime && !isValidTime(finalTime)) {
+      return res.status(400).json({ error: 'Invalid time format. Use HH:mm (24-hour format)' });
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    if (finalDate < today) {
+      return res.status(400).json({ error: 'Event date cannot be in the past' });
     }
 
     const { data, error } = await supabase

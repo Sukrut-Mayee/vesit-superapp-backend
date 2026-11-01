@@ -21,8 +21,18 @@ function uploadToCloudinary(fileBuffer, folder = 'campusone/notes') {
         resource_type: 'auto' // handles pdf, image, etc.
       },
       (error, result) => {
-        if (error) return reject(error);
-        resolve({
+  if (error) {
+    console.error('CLOUDINARY UPLOAD ERROR:', {
+      message: error.message,
+      http_code: error.http_code,
+      name: error.name,
+      response: error.response,
+      fullError: error
+    });
+    return reject(error);
+  }
+
+  resolve({
           url: result.secure_url,
           resourceType: result.resource_type,
           format: result.format
